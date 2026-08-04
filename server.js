@@ -4,7 +4,7 @@ const axios = require('axios');
 
 const app = express();
 app.use(express.json());
-
+app.use(express.static('public'));
 // Kết nối Supabase
 const supabase = createClient('https://xoossdghherkqbqxbuiz.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhvb3NzZGdoaGVya3FicXhidWl6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU4NDY3NDcsImV4cCI6MjEwMTQyMjc0N30.2ZTq_C-BifftVbLXrvDdysaHWPiJ7MFgomZfoIXlnOw');
 const API_VUOTNHANH = '111bd2ec-fac7-4a23-8173-876d11c19b29'; // Mã API của bạn
