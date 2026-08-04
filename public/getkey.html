@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Lấy Key Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-950 text-gray-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md bg-gray-900 border border-gray-800 rounded-3xl p-6 text-center relative overflow-hidden">
+        <div class="inline-flex p-4 bg-indigo-500/10 text-indigo-400 rounded-2xl mb-4 border border-indigo-500/20">
+            <i data-lucide="key-round" class="w-8 h-8"></i>
+        </div>
+
+        <h2 class="text-2xl font-black text-white">Xác Nhận Vượt Link</h2>
+        <p class="text-gray-400 text-sm mt-2" id="subText">Nhấn nút bên dưới để tiến hành vượt link quảng cáo lấy Key.</p>
+
+        <div class="mt-6">
+            <button id="btnAction" onclick="handleButtonClick()" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 text-white font-bold py-3.5 px-6 rounded-xl transition flex items-center justify-center gap-2">
+                <span id="btnText">LẤY LINK VƯỢT</span>
+                <i data-lucide="external-link" class="w-5 h-5" id="btnIcon"></i>
+            </button>
+        </div>
+
+        <div id="result" class="mt-6"></div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+        const urlParams = new URLSearchParams(window.location.search);
+        const session = urlParams.get('session');
+        const isVerify = urlParams.get('verify');
+
+        // Nếu vừa vượt link xong quay lại trang này (Có verify=true)
+        if (isVerify === 'true') {
+            document.getElementById('subText').innerText = "Đang kiểm tra xác thực...";
+            claimKey();
+        }
+
+        function handleButtonClick() {
+            if (isVerify === 'true') {
+                claimKey();
+            } else {
+                getShortLink();
+            }
+        }
+
+        // Bước 1: Lấy link rút gọn từ VuotNhanh và chuyển hướng người dùng
+        function getShortLink() {
+            if(!session) return alert("Thiếu Session! Vui lòng ấn Get Key lại từ Script Roblox.");
+            
+            const btn = document.getElementById('btnAction');
+            btn.disabled = true;
+            document.getElementById('btnText').innerText = "Đang tạo Link...";
+
+            fetch('/api/request-shortlink?session=' + session)
+            .then(res => res.json())
+            .then(data => {
+                if(data.status === 'success') {
+                    // Chuyển hướng người dùng sang link VuotNhanh
+                    window.location.href = data.shortenedUrl;
+                } else {
+                    alert(data.message);
+                    btn.disabled = false;
+                    document.getElementById('btnText').innerText = "LẤY LINK VƯỢT";
+                }
+            });
+        }
+
+        // Bước 2: Nhận Key sau khi vượt link xong
+        function claimKey() {
+            fetch(`/api/claim-key?session=${session}&verify=${isVerify}`)
+            .then(res => res.json())
+            .then(data => {
+                const resDiv = document.getElementById('result');
+                const btnAction = document.getElementById('btnAction');
+
+                if(data.status === 'success') {
+                    btnAction.style.display = 'none'; // Ẩn nút lấy link đi
+                    document.getElementById('subText').innerText = "Hoàn tất! Hãy sao chép key dán vào Script Roblox.";
+                    
+                    resDiv.innerHTML = `
+                        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-left">
+                            <p class="text-xs font-semibold text-emerald-400 uppercase tracking-wider mb-2">Key Của Bạn:</p>
+                            <div class="bg-gray-950 p-3 rounded-xl border border-gray-800 font-mono text-sm font-bold text-emerald-300 break-all">
+                                ${data.key}
+                            </div>
+                            <button onclick="navigator.clipboard.writeText('${data.key}'); alert('Đã sao chép Key!')" class="w-full mt-3 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 rounded-xl transition text-sm flex items-center justify-center gap-2">
+                                <i data-lucide="copy" class="w-4 h-4"></i> Sao Chép Key
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    resDiv.innerHTML = `<div class="bg-rose-500/10 border border-rose-500/30 text-rose-400 p-4 rounded-2xl text-sm">${data.message}</div>`;
+                }
+                lucide.createIcons();
+            });
+        }
+    </script>
+</body>
+</html>
+
