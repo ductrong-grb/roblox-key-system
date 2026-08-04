@@ -15,7 +15,8 @@ app.get('/api/get-link', async (req, res) => {
     if (!hwid) return res.status(400).json({ error: 'Thiếu HWID' });
 
     // Link đích sau khi vượt xong sẽ quay về trang xác thực
-    const targetUrl = `https://your-render-app.onrender.com/verify.html?hwid=${hwid}`;
+    const targetUrl = `https://roblox-key-system-45ga.onrender.com/verify.html?hwid=${hwid}`;
+
     
     try {
         const response = await axios.get(`https://vuotnhanh.com/api?api=${API_VUOTNHANH}&url=${encodeURIComponent(targetUrl)}&format=text`);
