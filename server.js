@@ -16,32 +16,31 @@ const supabase = createClient(
 const API_VUOTNHANH = '111bd2ec-fac7-4a23-8173-876d11c19b29';
 const DOMAIN = 'https://roblox-key-system-45ga.onrender.com';
 
-// 1. Script Roblox gọi API này khi bấm "Get Key" -> Sinh Token & Trả về Link GetKey
+// ==========================================
+// 1. LUỒNG LẤY KEY & XÁC THỰC CHO NGƯỜI DÙNG
+// ==========================================
+
+// Script Roblox gọi API khi bấm "Get Key" -> Sinh Token
 app.post('/api/init-getkey', async (req, res) => {
     const { hwid } = req.body;
     if (!hwid) return res.status(400).json({ error: 'Thiếu HWID' });
 
-    // Tạo token ngẫu nhiên độc quyền cho phiên lấy key này
     const token = crypto.randomBytes(16).toString('hex');
 
-    // Lưu Token + HWID vào bảng pending_tokens
     const { error } = await supabase.from('pending_tokens').insert({ token, hwid });
     if (error) return res.status(500).json({ error: 'Lỗi khởi tạo Token' });
 
-    // Trả về đường dẫn GetKey có chứa Token
     res.json({ link: `${DOMAIN}/getkey.html?token=${token}` });
 });
 
-// 2. Trang getkey.html gọi khi người dùng bấm "Lấy Key Ngay" -> Tạo link rút gọn VuotNhanh
+// Trang getkey.html gọi khi nhấn "Lấy Key Ngay" -> Rút gọn link
 app.get('/api/get-link', async (req, res) => {
     const { token } = req.query;
     if (!token) return res.status(400).json({ error: 'Thiếu Token' });
 
-    // Kiểm tra Token xem có hợp lệ không
     const { data: pending } = await supabase.from('pending_tokens').select('*').eq('token', token).single();
     if (!pending) return res.status(400).json({ error: 'Token không hợp lệ hoặc đã hết hạn!' });
 
-    // Sau khi vượt xong, VuotNhanh sẽ chuyển hướng về verify.html KÈM TOKEN
     const targetUrl = `${DOMAIN}/verify.html?token=${token}`;
 
     try {
@@ -52,12 +51,11 @@ app.get('/api/get-link', async (req, res) => {
     }
 });
 
-// 3. Trang verify.html gọi để lấy Key (BẮT BUỘC có Token chuẩn mới nhả Key)
+// Trang verify.html gọi để cấp Key chuẩn
 app.get('/api/claim-key', async (req, res) => {
     const { token } = req.query;
     if (!token) return res.status(400).json({ message: 'Thiếu Token xác nhận!' });
 
-    // Kiểm tra Token từ bảng pending_tokens
     const { data: pending } = await supabase.from('pending_tokens').select('*').eq('token', token).single();
     if (!pending) {
         return res.status(400).json({ message: 'Bạn chưa vượt link hoặc Token đã sử dụng!' });
@@ -65,11 +63,12 @@ app.get('/api/claim-key', async (req, res) => {
 
     const hwid = pending.hwid;
 
-    // Lấy 1 Key chưa dùng do Admin tạo sẵn từ DB
+    // Lấy 1 Key chưa dùng và không bị Banned
     const { data: unusedKeys } = await supabase
         .from('keys')
         .select('*')
         .eq('status', 'unused')
+        .eq('is_banned', false)
         .limit(1);
 
     if (!unusedKeys || unusedKeys.length === 0) {
@@ -79,26 +78,33 @@ app.get('/api/claim-key', async (req, res) => {
     const selectedKey = unusedKeys[0];
     const expiresAt = new Date(Date.now() + selectedKey.duration_hours * 3600 * 1000);
 
-    // Cập nhật trạng thái Key thành 'active'
+    // Cập nhật trạng thái Key
     await supabase.from('keys').update({ status: 'active' }).eq('id', selectedKey.id);
 
-    // Lưu thông tin kích hoạt vào active_sessions
+    // Lưu phiên kích hoạt kèm HWID
     await supabase.from('active_sessions').upsert({
         hwid: hwid,
         key_code: selectedKey.key_code,
-        expires_at: expiresAt
+        expires_at: expiresAt,
+        is_banned: false
     });
 
-    // Xóa Token cũ để không ai dùng lại link verify được nữa
+    // Xóa Token đã dùng
     await supabase.from('pending_tokens').delete().eq('token', token);
 
     res.json({ key: selectedKey.key_code });
 });
 
-// 4. Script Roblox gọi khi nhấn nút "Login"
+// Script Roblox gọi khi bấm "Login"
 app.post('/api/verify-login', async (req, res) => {
     const { hwid, key } = req.body;
 
+    // 1. Kiểm tra Key có tồn tại hoặc bị BAN không
+    const { data: keyData } = await supabase.from('keys').select('*').eq('key_code', key).single();
+    if (!keyData) return res.json({ success: false, message: 'Key không tồn tại!' });
+    if (keyData.is_banned) return res.json({ success: false, message: 'Key này đã bị BANNED!' });
+
+    // 2. Kiểm tra phiên kích hoạt HWID
     const { data: session } = await supabase
         .from('active_sessions')
         .select('*')
@@ -110,6 +116,10 @@ app.post('/api/verify-login', async (req, res) => {
         return res.json({ success: false, message: 'Key hoặc thiết bị không hợp lệ!' });
     }
 
+    if (session.is_banned) {
+        return res.json({ success: false, message: 'Thiết bị (HWID) này đã bị BANNED!' });
+    }
+
     if (new Date() > new Date(session.expires_at)) {
         return res.json({ success: false, message: 'Key đã hết hạn sử dụng!' });
     }
@@ -117,34 +127,84 @@ app.post('/api/verify-login', async (req, res) => {
     res.json({ success: true, message: 'Đăng nhập thành công!' });
 });
 
-// 5. API cho trang Web Admin tự tạo Key thủ công
-app.post('/api/admin/add-key', async (req, res) => {
-    const { username, password, key_code, duration_hours } = req.body;
 
-    // Xác thực Admin
+// ==========================================
+// 2. TẤT CẢ API DÀNH CHO ADMIN DASHBOARD
+// ==========================================
+
+// Hàm middleware kiểm tra tài khoản Admin
+async function verifyAdmin(username, password) {
+    if (!username || !password) return false;
     const { data: admin } = await supabase
         .from('admin_users')
         .select('*')
         .eq('username', username)
         .eq('password', password)
         .single();
+    return !!admin;
+}
 
-    if (!admin) {
+// API thêm Key mới (Hỗ trợ cài đặt thời gian & số máy tối đa)
+app.post('/api/admin/add-key', async (req, res) => {
+    const { username, password, key_code, duration_hours, max_uses } = req.body;
+
+    if (!(await verifyAdmin(username, password))) {
         return res.status(403).json({ error: 'Sai tài khoản hoặc mật khẩu Admin!' });
     }
 
-    // Thêm key mới vào DB
     const { error } = await supabase.from('keys').insert({
         key_code: key_code,
         duration_hours: duration_hours || 24,
-        status: 'unused'
+        max_uses: max_uses || 1,
+        status: 'unused',
+        is_banned: false
     });
 
-    if (error) {
-        return res.status(400).json({ error: 'Key đã tồn tại hoặc bị lỗi!' });
-    }
+    if (error) return res.status(400).json({ error: 'Key đã tồn tại hoặc lỗi dữ liệu!' });
 
     res.json({ success: true, message: 'Đã thêm Key thành công!' });
+});
+
+// API lấy toàn bộ danh sách Key & Mã thiết bị HWID
+app.post('/api/admin/list-keys', async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!(await verifyAdmin(username, password))) {
+        return res.status(403).json({ error: 'Chưa đăng nhập hoặc sai thông tin Admin!' });
+    }
+
+    const { data: keys } = await supabase.from('keys').select('*').order('created_at', { ascending: false });
+    const { data: sessions } = await supabase.from('active_sessions').select('*');
+
+    res.json({ keys: keys || [], sessions: sessions || [] });
+});
+
+// API Khóa (Ban) hoặc Gỡ Khóa (Unban) Key & HWID
+app.post('/api/admin/toggle-ban', async (req, res) => {
+    const { username, password, key_code, is_banned } = req.body;
+
+    if (!(await verifyAdmin(username, password))) {
+        return res.status(403).json({ error: 'Lỗi xác thực Admin!' });
+    }
+
+    await supabase.from('keys').update({ is_banned }).eq('key_code', key_code);
+    await supabase.from('active_sessions').update({ is_banned }).eq('key_code', key_code);
+
+    res.json({ success: true, message: is_banned ? 'Đã BAN Key!' : 'Đã GỠ BAN Key!' });
+});
+
+// API Xóa hoàn toàn Key khỏi Database
+app.post('/api/admin/delete-key', async (req, res) => {
+    const { username, password, key_code } = req.body;
+
+    if (!(await verifyAdmin(username, password))) {
+        return res.status(403).json({ error: 'Lỗi xác thực Admin!' });
+    }
+
+    await supabase.from('keys').delete().eq('key_code', key_code);
+    await supabase.from('active_sessions').delete().eq('key_code', key_code);
+
+    res.json({ success: true, message: 'Đã xóa Key khỏi hệ thống!' });
 });
 
 app.listen(3000, () => console.log('Server running on port 3000'));
