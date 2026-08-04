@@ -6,7 +6,7 @@ app.use(express.json());
 
 // CONFIG
 const API_TOKEN = "111bd2ec-fac7-4a23-876d11c19b29"; // Mã API lấy từ ảnh của bạn
-const DOMAIN = "https://your-server-domain.com"; // Domain hoặc IP VPS của bạn
+const DOMAIN = "https://roblox-key-system-mt97.onrender.com"; // Domain hoặc IP VPS của bạn
 
 // Lưu trữ HWID hợp lệ tạm thời (trong thực tế nên dùng Database/Redis)
 // Cấu trúc: { "HWID_USER": expire_timestamp }
