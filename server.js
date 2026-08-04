@@ -11,7 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// --- CẤU HÌNH SUPABASE ---
+// CẤU HÌNH SUPABASE 
 // Bạn có thể điền trực tiếp hoặc cấu hình Environment Variables trên Render
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://YOUR_PROJECT_ID.supabase.co";
 const SUPABASE_KEY = process.env.SUPABASE_KEY || "YOUR_SUPABASE_ANON_KEY";
@@ -27,7 +27,7 @@ const getDomain = (req) => {
     return `https://${host}`;
 };
 
--- Lưu Session tạm thời trên RAM (vì Session hết hạn rất nhanh)
+Lưu Session tạm thời trên RAM (vì Session hết hạn rất nhanh)
 let activeSessions = {};
 
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'admin.html')));
@@ -42,7 +42,7 @@ app.get('/api/admin/keys', async (req, res) => {
     const { data, error } = await supabase.from('keys').select('*');
     if (error) return res.status(500).json({ error: error.message });
     
-    -- Format dữ liệu trả về cho khớp với Frontend của bạn
+     Format dữ liệu trả về cho khớp với Frontend của bạn
     const formattedData = data.map(k => ({
         key: k.key,
         durationHours: k.duration_hours,
@@ -55,7 +55,7 @@ app.get('/api/admin/keys', async (req, res) => {
     res.json(formattedData);
 });
 
--- Tạo Key mới vào Supabase
+ Tạo Key mới vào Supabase
 app.post('/api/admin/create-key', async (req, res) => {
     const { key, durationHours, maxDevices } = req.body;
     
@@ -74,7 +74,7 @@ app.post('/api/admin/create-key', async (req, res) => {
     res.json({ success: true });
 });
 
--- Thao tác cấm/xoá/reset HWID
+ Thao tác cấm/xoá/reset HWID
 app.post('/api/admin/action-key', async (req, res) => {
     const { key, action } = req.body;
 
@@ -140,7 +140,7 @@ app.get('/api/claim-key', async (req, res) => {
         return res.json({ status: 'success', key: sessionData.key });
     }
 
-    -- Tìm Key khả dụng từ Supabase
+     Tìm Key khả dụng từ Supabase
     const { data: availableKeys, error } = await supabase
         .from('keys')
         .select('*')
@@ -164,7 +164,7 @@ app.post('/api/verify-key', async (req, res) => {
     const { key, hwid } = req.body;
     if (!key || !hwid) return res.json({ success: false, message: "Thiếu thông tin!" });
 
-    -- Lấy thông tin Key từ Supabase
+     Lấy thông tin Key từ Supabase
     const { data: keyData, error } = await supabase
         .from('keys')
         .select('*')
@@ -188,14 +188,14 @@ app.post('/api/verify-key', async (req, res) => {
         
         hwids.push(hwid);
 
-        -- Tính thời gian hết hạn nếu lần đầu dùng
+         Tính thời gian hết hạn nếu lần đầu dùng
         if (keyData.duration_hours && !expiresAt) {
             const now = new Date();
             now.setHours(now.getHours() + keyData.duration_hours);
             expiresAt = now.toISOString();
         }
 
-        -- Cập nhật HWID và Expiration vào Supabase
+         Cập nhật HWID và Expiration vào Supabase
         await supabase
             .from('keys')
             .update({ hwids: hwids, expires_at: expiresAt })
