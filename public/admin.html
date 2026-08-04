@@ -10,20 +10,19 @@
         body { background-color: #0f172a; color: #f8fafc; padding: 20px; }
         .container { max-width: 1000px; margin: 0 auto; }
         .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
-        h2 { color: #38bdf8; font-size: 20px; margin-bottom: 16px; }
+        h2 { color: #38bdf8; font-size: 20px; margin-bottom: 16px; text-align: center; }
         
-        /* Grid Form */
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 16px; }
         input { width: 100%; padding: 10px 14px; background: #0f172a; border: 1px solid #334155; border-radius: 6px; color: #fff; font-size: 14px; outline: none; }
+        input:focus { border-color: #38bdf8; }
         
-        /* Buttons */
         .btn { padding: 10px 18px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; transition: 0.2s; }
         .btn-blue { background: #38bdf8; color: #0f172a; }
+        .btn-blue:hover { background: #0ea5e9; }
         .btn-red { background: #ef4444; color: #fff; }
         .btn-warn { background: #f59e0b; color: #000; }
         .btn-sm { padding: 6px 10px; font-size: 12px; margin-right: 4px; }
 
-        /* Table Style */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { text-align: left; padding: 12px; border-bottom: 1px solid #334155; font-size: 13px; }
         th { color: #94a3b8; font-weight: 600; background: #0f172a; }
@@ -32,6 +31,9 @@
         .badge-active { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
         .badge-banned { background: rgba(239, 68, 68, 0.2); color: #f87171; }
         
+        .alert { margin-top: 12px; padding: 10px; border-radius: 6px; font-size: 13px; text-align: center; display: none; }
+        .alert-error { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; }
+
         #dashboard { display: none; }
     </style>
 </head>
@@ -43,24 +45,26 @@
             <h2>ADMIN LOGIN</h2>
             <input type="text" id="user" placeholder="Tên đăng nhập" style="margin-bottom: 10px;">
             <input type="password" id="pass" placeholder="Mật khẩu" style="margin-bottom: 16px;">
-            <button class="btn btn-blue" style="width: 100%;" onclick="login()">ĐĂNG NHẬP</button>
+            <button class="btn btn-blue" style="width: 100%;" onclick="login()">ĐĂNG NHẬP HỆ THỐNG</button>
+            <div id="login-err" class="alert alert-error"></div>
         </div>
 
         <!-- 2. BẢNG ĐIỀU KHIỂN SAU KHIN LOGIN -->
         <div id="dashboard">
             <div class="card">
-                <h2>TẠO KEY MỚI</h2>
+                <h2 style="text-align: left;">TẠO KEY MỚI</h2>
                 <div class="form-grid">
                     <input type="text" id="new-key" placeholder="Mã Key (VD: VIP-KEY-100)">
                     <input type="number" id="new-hours" placeholder="Số giờ dùng (VD: 24)" value="24">
                     <input type="number" id="new-uses" placeholder="Số máy tối đa (VD: 1)" value="1">
                 </div>
                 <button class="btn btn-blue" onclick="addKey()">+ THÊM KEY</button>
+                <button class="btn btn-red" style="float: right;" onclick="location.reload()">ĐĂNG XUẤT</button>
             </div>
 
             <div class="card">
-                <div style="display: flex; justify-out: space-between; align-items: center; margin-bottom: 12px;">
-                    <h2>DANH SÁCH KEY & THIẾT BỊ (HWID)</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                    <h2 style="text-align: left; margin: 0;">DANH SÁCH KEY & HWID</h2>
                     <button class="btn btn-blue btn-sm" onclick="loadKeys()">🔄 Tải lại</button>
                 </div>
                 
@@ -76,7 +80,6 @@
                             </tr>
                         </thead>
                         <tbody id="key-table-body">
-                            <!-- Code JS sẽ tự đổ dữ liệu vào đây -->
                         </tbody>
                     </table>
                 </div>
@@ -88,13 +91,39 @@
     <script>
         let auth = {};
 
-        function login() {
-            auth.username = document.getElementById('user').value;
-            auth.password = document.getElementById('pass').value;
-            
+        async function login() {
+            const userVal = document.getElementById('user').value.trim();
+            const passVal = document.getElementById('pass').value.trim();
+            const errBox = document.getElementById('login-err');
+            errBox.style.display = 'none';
+
+            if (!userVal || !passVal) {
+                errBox.innerText = "Vui lòng nhập đầy đủ tài khoản & mật khẩu!";
+                errBox.style.display = 'block';
+                return;
+            }
+
+            auth = { username: userVal, password: passVal };
+
+            // Gửi request test thông tin login ngay
+            const res = await fetch('/api/admin/list-keys', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(auth)
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                errBox.innerText = data.error || "Sai tài khoản hoặc mật khẩu Admin!";
+                errBox.style.display = 'block';
+                return;
+            }
+
+            // Đăng nhập thành công
             document.getElementById('login-box').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
-            loadKeys();
+            renderTable(data.keys, data.sessions);
         }
 
         async function loadKeys() {
@@ -104,15 +133,20 @@
                 body: JSON.stringify(auth)
             });
             const data = await res.json();
-            
-            if (!res.ok) return alert(data.error);
+            if (res.ok) renderTable(data.keys, data.sessions);
+        }
 
+        function renderTable(keys, sessions) {
             const tbody = document.getElementById('key-table-body');
             tbody.innerHTML = '';
 
-            data.keys.forEach(k => {
-                // Lấy HWID của key từ danh sách sessions
-                const session = data.sessions.find(s => s.key_code === k.key_code);
+            if (!keys || keys.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Chưa có Key nào trong hệ thống</td></tr>';
+                return;
+            }
+
+            keys.forEach(k => {
+                const session = sessions ? sessions.find(s => s.key_code === k.key_code) : null;
                 const hwidText = session ? session.hwid : "Chưa kích hoạt";
                 
                 let statusBadge = `<span class="badge badge-unused">CHƯA DÙNG</span>`;
@@ -137,18 +171,25 @@
         }
 
         async function addKey() {
-            const keyCode = document.getElementById('new-key').value;
-            const hours = parseInt(document.getElementById('new-hours').value);
-            const maxUses = parseInt(document.getElementById('new-uses').value);
+            const keyCode = document.getElementById('new-key').value.trim();
+            const hours = parseInt(document.getElementById('new-hours').value) || 24;
+            const maxUses = parseInt(document.getElementById('new-uses').value) || 1;
 
-            await fetch('/api/admin/add-key', {
+            if (!keyCode) return alert("Vui lòng nhập Mã Key!");
+
+            const res = await fetch('/api/admin/add-key', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ ...auth, key_code: keyCode, duration_hours: hours, max_uses: maxUses })
             });
 
-            document.getElementById('new-key').value = '';
-            loadKeys();
+            const data = await res.json();
+            if (res.ok) {
+                document.getElementById('new-key').value = '';
+                loadKeys();
+            } else {
+                alert(data.error || "Lỗi tạo Key!");
+            }
         }
 
         async function toggleBan(keyCode, isBanned) {
