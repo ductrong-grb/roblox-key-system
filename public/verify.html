@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác Thực Thành Công - Verification System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+        body { background-color: #0f172a; color: #f8fafc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 32px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .icon { width: 60px; height: 60px; background: rgba(34,197,94,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; color: #22c55e; font-size: 28px; font-weight: bold; }
+        h2 { color: #f8fafc; font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        p { color: #94a3b8; font-size: 14px; line-height: 1.5; margin-bottom: 20px; }
+        .key-box { background: #0f172a; border: 1px dashed #22c55e; border-radius: 8px; padding: 14px; color: #4ade80; font-family: monospace; font-size: 16px; font-weight: 700; margin-bottom: 20px; word-break: break-all; }
+        .btn { width: 100%; padding: 14px; background: #22c55e; border: none; border-radius: 8px; color: #0f172a; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.2s; }
+        .btn:hover { background: #16a34a; }
+        .error-msg { background: rgba(239, 68, 68, 0.2); color: #f87171; padding: 12px; border-radius: 8px; border: 1px solid #ef4444; font-size: 13px; display: none; }
+    </style>
+</head>
+<body>
+    <div class="card" id="main-box">
+        <div class="icon">✓</div>
+        <h2>XÁC THỰC THÀNH CÔNG</h2>
+        <p>Sao chép mã Key bên dưới và dán vào Bảng Đăng Nhập trong Roblox Script để sử dụng.</p>
+        
+        <div id="key-display" class="key-box">Đang lấy mã Key...</div>
+        
+        <button id="btn-copy" class="btn" onclick="copyToClipboard()">SAO CHÉP KEY</button>
+        <div id="error-box" class="error-msg"></div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        let finalKey = "";
+
+        async function fetchKey() {
+            if (!token) {
+                showError("Truy cập không hợp lệ! Vui lòng không vào trực tiếp trang này.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/claim-key?token=${token}`);
+                const data = await response.json();
+
+                if (response.ok && data.key) {
+                    finalKey = data.key;
+                    document.getElementById('key-display').innerText = finalKey;
+                } else {
+                    showError(data.message || "Token đã hết hạn hoặc bạn chưa vượt link thành công!");
+                }
+            } catch (err) {
+                showError("Không thể kết nối đến máy chủ xác minh!");
+            }
+        }
+
+        function copyToClipboard() {
+            if (!finalKey) return;
+            navigator.clipboard.writeText(finalKey);
+            const btn = document.getElementById('btn-copy');
+            btn.innerText = "ĐÃ SAO CHÉP!";
+            btn.style.background = "#38bdf8";
+            setTimeout(() => {
+                btn.innerText = "SAO CHÉP KEY";
+                btn.style.background = "#22c55e";
+            }, 2000);
+        }
+
+        function showError(msg) {
+            document.getElementById('key-display').style.display = 'none';
+            document.getElementById('btn-copy').style.display = 'none';
+            const errBox = document.getElementById('error-box');
+            errBox.innerText = msg;
+            errBox.style.display = 'block';
+        }
+
+        fetchKey();
+    </script>
+</body>
+</html>
