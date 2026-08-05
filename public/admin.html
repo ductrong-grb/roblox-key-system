@@ -54,7 +54,7 @@
                     <div class="p-2 bg-sky-500/10 text-sky-400 rounded-lg">
                         <i data-lucide="terminal" class="w-5 h-5"></i>
                     </div>
-                    <span class="font-bold text-white text-base">KeySystem v2.0</span>
+                    <span class="font-bold text-white text-base">KeySystem v2.5</span>
                 </div>
 
                 <nav class="space-y-1">
@@ -113,6 +113,14 @@
                 
                 <div class="glass p-6 rounded-2xl space-y-4">
                     <div>
+                        <label class="block text-xs font-semibold text-slate-400 mb-1">LOẠI KEY</label>
+                        <select id="input-key-type" onchange="toggleKeyTypeInputs()" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sky-500">
+                            <option value="single">🔑 Key Thường (Dành cho Vượt Link - 1 máy)</option>
+                            <option value="vip">⭐ Key VIP / Event (Phát Free - Sử dụng nhiều máy)</option>
+                        </select>
+                    </div>
+
+                    <div>
                         <label class="block text-xs font-semibold text-slate-400 mb-1">MÃ KEY (CODE)</label>
                         <input type="text" id="input-key-code" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sky-500" placeholder="VD: KEY-VIP-PRO-100">
                     </div>
@@ -122,9 +130,9 @@
                             <label class="block text-xs font-semibold text-slate-400 mb-1">THỜI GIAN (GIỜ)</label>
                             <input type="number" id="input-key-hours" value="24" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sky-500">
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-400 mb-1">SỐ MÁY DÙNG</label>
-                            <input type="number" id="input-key-uses" value="1" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sky-500">
+                        <div id="box-max-uses" class="hidden">
+                            <label class="block text-xs font-semibold text-amber-400 mb-1">SỐ MÁY TỐI ĐA</label>
+                            <input type="number" id="input-key-uses" value="20" class="w-full bg-slate-900 border border-amber-500/50 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-amber-400">
                         </div>
                     </div>
 
@@ -153,7 +161,9 @@
                             <thead class="bg-slate-900/80 text-slate-400 border-b border-slate-800">
                                 <tr>
                                     <th class="p-4 font-semibold">MÃ KEY</th>
+                                    <th class="p-4 font-semibold">LOẠI KEY</th>
                                     <th class="p-4 font-semibold">TRẠNG THÁI</th>
+                                    <th class="p-4 font-semibold">SỐ MÁY ĐÃ NHẬP</th>
                                     <th class="p-4 font-semibold">THỜI HẠN</th>
                                     <th class="p-4 font-semibold">THAO TÁC</th>
                                 </tr>
@@ -197,8 +207,17 @@
         let cachedKeys = [];
         let cachedSessions = [];
 
-        // Khởi tạo icon Lucide
         lucide.createIcons();
+
+        function toggleKeyTypeInputs() {
+            const type = document.getElementById('input-key-type').value;
+            const box = document.getElementById('box-max-uses');
+            if (type === 'vip') {
+                box.classList.remove('hidden');
+            } else {
+                box.classList.add('hidden');
+            }
+        }
 
         function showToast(msg, isError = false) {
             const toast = document.getElementById('toast');
@@ -260,16 +279,13 @@
         }
 
         function renderAllData() {
-            // Render Stats
             document.getElementById('stat-total').innerText = cachedKeys.length;
             document.getElementById('stat-active').innerText = cachedKeys.filter(k => k.status === 'active' && !k.is_banned).length;
             document.getElementById('stat-unused').innerText = cachedKeys.filter(k => k.status === 'unused' && !k.is_banned).length;
             document.getElementById('stat-banned').innerText = cachedKeys.filter(k => k.is_banned).length;
 
-            // Render Table Keys
             renderKeysTable(cachedKeys);
 
-            // Render Table Devices
             const devBody = document.getElementById('table-devices-body');
             devBody.innerHTML = '';
             if (cachedSessions.length === 0) {
@@ -291,19 +307,29 @@
             const tbody = document.getElementById('table-keys-body');
             tbody.innerHTML = '';
             if (keys.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">Không tìm thấy Key</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-slate-500">Không tìm thấy Key</td></tr>';
                 return;
             }
 
             keys.forEach(k => {
                 let badge = '<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-sky-500/10 text-sky-400">CHƯA DÙNG</span>';
                 if (k.is_banned) badge = '<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-red-500/10 text-red-400">BANNED</span>';
-                else if (k.status === 'active') badge = '<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-emerald-500/10 text-emerald-400">ĐANG HẠN</span>';
+                else if (k.status === 'active') badge = '<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-emerald-500/10 text-emerald-400">ĐÃ KÍCH HOẠT</span>';
+
+                const isVip = k.key_type === 'vip';
+                const typeBadge = isVip 
+                    ? '<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-400">⭐ KEY VIP</span>' 
+                    : '<span class="px-2 py-1 rounded-md text-[10px] font-bold bg-slate-700 text-slate-300">🔑 THƯỜNG</span>';
+
+                const usedCount = k.used_count || 0;
+                const maxUses = k.max_uses || 1;
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-800/30">
                         <td class="p-4 font-bold text-white">${k.key_code}</td>
+                        <td class="p-4">${typeBadge}</td>
                         <td class="p-4">${badge}</td>
+                        <td class="p-4 font-mono font-bold ${usedCount >= maxUses ? 'text-red-400' : 'text-sky-400'}">${usedCount}/${maxUses} máy</td>
                         <td class="p-4 text-slate-400">${k.duration_hours} giờ</td>
                         <td class="p-4 space-x-2">
                             <button onclick="toggleBanKey('${k.key_code}', ${!k.is_banned})" class="px-2.5 py-1 rounded-lg text-[11px] font-bold ${k.is_banned ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20' : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20'}">
@@ -323,6 +349,7 @@
         }
 
         async function createNewKey() {
+            const type = document.getElementById('input-key-type').value;
             const code = document.getElementById('input-key-code').value.trim();
             const hours = parseInt(document.getElementById('input-key-hours').value) || 24;
             const uses = parseInt(document.getElementById('input-key-uses').value) || 1;
@@ -332,12 +359,18 @@
             const res = await fetch('/api/admin/add-key', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ ...adminAuth, key_code: code, duration_hours: hours, max_uses: uses })
+                body: JSON.stringify({ 
+                    ...adminAuth, 
+                    key_code: code, 
+                    duration_hours: hours, 
+                    max_uses: uses,
+                    key_type: type
+                })
             });
 
             const data = await res.json();
             if (res.ok) {
-                showToast('Tạo Key mới thành công!');
+                showToast(data.message || 'Tạo Key mới thành công!');
                 document.getElementById('input-key-code').value = '';
                 loadAllData();
             } else {
