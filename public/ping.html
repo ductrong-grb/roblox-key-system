@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keep Alive - Render & Supabase</title>
+    <!-- Nhúng CDN Supabase JS -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body style="background-color: #0b0f17; color: #fff; font-family: sans-serif; display: flex; justify-content: center; items-center; height: 100vh; margin: 0;">
+    <div style="text-align: center; padding: 20px; border: 1px solid #333; border-radius: 12px; background: #121826;">
+        <h2 style="color: #38bdf8;">🔄 Keep-Alive Monitor</h2>
+        <p id="status" style="color: #aaa;">Đang kết nối tới Supabase...</p>
+        <p id="time" style="font-size: 12px; color: #666;"></p>
+    </div>
+
+    <script>
+        // Thay thông tin Supabase URL và Anon Key của bạn vào đây
+        const SUPABASE_URL = 'https://YOUR_SUPABASE_PROJECT_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        async function pingSupabase() {
+            const statusEl = document.getElementById('status');
+            const timeEl = document.getElementById('time');
+            
+            try {
+                // Gọi 1 truy vấn nhẹ vào bảng admin_users để kích hoạt DB
+                const { data, error } = await supabase
+                    .from('admin_users')
+                    .select('id')
+                    .limit(1);
+
+                if (error) {
+                    statusEl.innerText = "❌ Lỗi kết nối Supabase: " + error.message;
+                    statusEl.style.color = "#f87171";
+                } else {
+                    statusEl.innerText = "✅ Render & Supabase đã được đánh thức!";
+                    statusEl.style.color = "#4ade80";
+                }
+            } catch (err) {
+                statusEl.innerText = "❌ Lỗi ngoại lệ: " + err.message;
+                statusEl.style.color = "#f87171";
+            }
+            
+            timeEl.innerText = "Thời gian thực hiện: " + new Date().toLocaleString('vi-VN');
+        }
+
+        // Tự động gọi ngay khi cron-job truy cập vào trang
+        pingSupabase();
+    </script>
+</body>
+</html>
