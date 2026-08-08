@@ -16,8 +16,18 @@
                             50: '#f0f9ff',
                             500: '#06b6d4',
                             600: '#0891b2',
-                            900: '#0b132b',
+                            900: '#164e63',
+                        },
+                        dark: {
+                            bg: '#07090e',
+                            card: 'rgba(15, 23, 42, 0.65)',
+                            border: 'rgba(255, 255, 255, 0.08)',
+                            hover: 'rgba(30, 41, 59, 0.5)'
                         }
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['Fira Code', 'monospace']
                     }
                 }
             }
@@ -25,90 +35,75 @@
     </script>
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        * {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-        body {
-            background-color: #030712;
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #07090e;
             background-image: 
-                radial-gradient(at 0% 0%, rgba(14, 165, 233, 0.12) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
             background-attachment: fixed;
         }
-        .glass-panel {
-            background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(16px);
+        .glass-panel { 
+            background: rgba(13, 18, 30, 0.7); 
+            backdrop-filter: blur(16px); 
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.07); 
         }
-        .glass-input {
-            background: rgba(30, 41, 59, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.2s ease;
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
-        .glass-input:focus {
-            background: rgba(30, 41, 59, 0.8);
-            border-color: #38bdf8;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
-        }
-        .tab-active {
-            background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(99, 102, 241, 0.2) 100%);
-            border: 1px solid rgba(56, 189, 248, 0.4);
-            color: #38bdf8 !important;
-            font-weight: 700;
-            box-shadow: 0 4px 20px rgba(56, 189, 248, 0.15);
+        .tab-active { 
+            background: linear-gradient(90deg, rgba(6, 182, 212, 0.15) 0%, rgba(6, 182, 212, 0.02) 100%); 
+            color: #38bdf8; 
+            border-left: 3px solid #38bdf8;
+            font-weight: 700; 
         }
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(51, 65, 85, 0.8);
-            border-radius: 9999px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(71, 85, 105, 1);
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #07090e; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
     </style>
 </head>
-<body class="text-slate-200 min-h-screen selection:bg-sky-500 selection:text-white">
+<body class="text-slate-300 antialiased min-h-screen selection:bg-cyan-500/30 selection:text-cyan-200">
 
     <!-- 1. MÀN HÌNH ĐĂNG NHẬP -->
-    <div id="login-screen" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-[#030712]/90 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-md p-8 rounded-3xl shadow-2xl space-y-8 relative overflow-hidden">
-            <div class="absolute -top-24 -left-24 w-48 h-48 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none"></div>
-
-            <div class="text-center space-y-3 relative z-10">
-                <div class="inline-flex p-4 rounded-2xl bg-gradient-to-tr from-sky-500/20 to-indigo-500/20 border border-sky-500/30 text-sky-400 mb-1 shadow-lg shadow-sky-500/10">
-                    <i data-lucide="shield-check" class="w-10 h-10"></i>
+    <div id="login-screen" class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-[#07090e]">
+        <!-- Background Glow -->
+        <div class="absolute w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+        
+        <div class="glass-panel w-full max-w-md p-8 rounded-3xl shadow-2xl space-y-6 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent"></div>
+            
+            <div class="text-center space-y-2">
+                <div class="inline-flex p-3.5 rounded-2xl bg-cyan-500/10 text-cyan-400 ring-1 ring-cyan-500/20 mb-1">
+                    <i data-lucide="shield-check" class="w-8 h-8"></i>
                 </div>
-                <h2 class="text-3xl font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-white via-slate-200 to-slate-400">ADMIN PORTAL</h2>
-                <p class="text-xs text-slate-400 tracking-wide uppercase font-medium">Hệ thống quản lý Key Script Roblox</p>
+                <h2 class="text-2xl font-extrabold tracking-tight text-white">ADMIN PORTAL</h2>
+                <p class="text-xs text-slate-400">Hệ thống quản lý Key Script Roblox Chuyên Nghiệp</p>
             </div>
 
-            <div class="space-y-5 relative z-10">
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold text-slate-300 tracking-wider uppercase">Tài khoản</label>
+            <div class="space-y-4 pt-2">
+                <div>
+                    <label class="block text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Tài Khoản Admin</label>
                     <div class="relative">
                         <i data-lucide="user" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500"></i>
-                        <input type="text" id="admin-user" class="glass-input w-full rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none" placeholder="Nhập username...">
+                        <input type="text" id="admin-user" class="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-white transition placeholder:text-slate-600" placeholder="Nhập username...">
                     </div>
                 </div>
-                <div class="space-y-1.5">
-                    <label class="block text-xs font-bold text-slate-300 tracking-wider uppercase">Mật khẩu</label>
+                <div>
+                    <label class="block text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">Mật Khẩu</label>
                     <div class="relative">
                         <i data-lucide="lock" class="w-4 h-4 absolute left-3.5 top-3.5 text-slate-500"></i>
-                        <input type="password" id="admin-pass" class="glass-input w-full rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none" placeholder="••••••••">
+                        <input type="password" id="admin-pass" class="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 text-white transition placeholder:text-slate-600" placeholder="••••••••">
                     </div>
                 </div>
-                <button onclick="handleLogin()" class="w-full bg-gradient-to-r from-sky-400 to-blue-600 hover:from-sky-300 hover:to-blue-500 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm transition-all duration-300 shadow-lg shadow-sky-500/25 active:scale-[0.98]">
+                <button onclick="handleLogin()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition-all duration-200 shadow-lg shadow-cyan-500/25 active:scale-[0.98] mt-2">
                     ĐĂNG NHẬP HỆ THỐNG
                 </button>
             </div>
@@ -119,203 +114,230 @@
     <div id="dashboard" class="hidden min-h-screen flex flex-col md:flex-row">
         
         <!-- SIDEBAR NAVIGATION -->
-        <aside class="w-full md:w-72 glass-panel border-r-0 md:border-r border-b md:border-b-0 p-5 flex flex-col justify-between shrink-0 z-20">
+        <aside class="w-full md:w-64 glass-panel border-r-0 md:border-r border-b md:border-b-0 p-5 flex flex-col justify-between shrink-0 z-20">
             <div class="space-y-8">
-                <!-- LOGO HEADER -->
-                <div class="flex items-center gap-3 px-3 py-2">
-                    <div class="p-2.5 bg-gradient-to-br from-sky-500/20 to-indigo-500/20 border border-sky-500/30 text-sky-400 rounded-xl shadow-md">
-                        <i data-lucide="terminal" class="w-6 h-6"></i>
+                <!-- Logo -->
+                <div class="flex items-center gap-3 px-2">
+                    <div class="p-2.5 bg-gradient-to-tr from-cyan-500 to-blue-500 text-slate-950 rounded-xl shadow-md shadow-cyan-500/20 font-bold">
+                        <i data-lucide="terminal" class="w-5 h-5"></i>
                     </div>
                     <div>
-                        <span class="font-extrabold text-white text-lg tracking-wide block">KEY SYSTEM</span>
-                        <span class="text-[10px] text-sky-400 font-semibold uppercase tracking-widest bg-sky-500/10 px-2 py-0.5 rounded-full border border-sky-500/20">v2.5 PRO EDITION</span>
+                        <span class="font-extrabold text-white text-base tracking-wide block leading-none">KeySystem</span>
+                        <span class="text-[10px] text-cyan-400 font-mono tracking-widest uppercase">v2.5 Enterprise</span>
                     </div>
                 </div>
 
-                <!-- NAVIGATION MENU -->
-                <nav class="space-y-2">
-                    <button onclick="switchTab('overview')" id="nav-overview" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all duration-200 tab-active">
+                <!-- Navigation Links -->
+                <nav class="space-y-1.5">
+                    <div class="px-3 pb-2 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Danh Mục Chính</div>
+                    
+                    <button onclick="switchTab('overview')" id="nav-overview" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/40 transition tab-active">
                         <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Tổng Quan
                     </button>
-                    <button onclick="switchTab('create')" id="nav-create" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all duration-200">
+                    <button onclick="switchTab('create')" id="nav-create" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
                         <i data-lucide="key-round" class="w-4 h-4"></i> Tạo Key Mới
                     </button>
-                    <button onclick="switchTab('keys')" id="nav-keys" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all duration-200">
+                    <button onclick="switchTab('keys')" id="nav-keys" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
                         <i data-lucide="database" class="w-4 h-4"></i> Danh Sách Key
                     </button>
-                    <button onclick="switchTab('devices')" id="nav-devices" class="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all duration-200">
-                        <i data-lucide="smartphone" class="w-4 h-4"></i> Quản Lý Thiết Bị
+                    <button onclick="switchTab('devices')" id="nav-devices" class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-slate-800/40 transition">
+                        <i data-lucide="smartphone" class="w-4 h-4"></i> Quản Lý HWID
                     </button>
                 </nav>
             </div>
 
-            <!-- LOGOUT BUTTON -->
-            <div class="pt-4 border-t border-slate-800/80">
-                <button onclick="location.reload()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all duration-200">
+            <!-- User Info / Logout -->
+            <div class="pt-4 border-t border-slate-800/80 space-y-3">
+                <div class="flex items-center gap-3 px-2">
+                    <div class="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-cyan-400">
+                        AD
+                    </div>
+                    <div class="flex-1 overflow-hidden">
+                        <p class="text-xs font-bold text-white truncate">Administrator</p>
+                        <p class="text-[10px] text-emerald-400 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Online
+                        </p>
+                    </div>
+                </div>
+                <button onclick="location.reload()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 transition">
                     <i data-lucide="log-out" class="w-4 h-4"></i> Đăng Xuất
                 </button>
             </div>
         </aside>
 
         <!-- MAIN CONTENT AREA -->
-        <main class="flex-1 p-6 md:p-10 overflow-y-auto space-y-8">
-
-            <!-- TAB 1: TỔNG QUAN -->
-            <section id="tab-overview" class="space-y-6">
-                <div>
-                    <h1 class="text-2xl font-extrabold text-white tracking-tight">Bảng Thống Kê System</h1>
-                    <p class="text-xs text-slate-400">Tổng quan trạng thái hoạt động của hệ thống key</p>
+        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+            
+            <!-- TOP HEADER BAR -->
+            <header class="glass-panel border-b border-x-0 border-t-0 px-6 py-4 flex items-center justify-between gap-4 sticky top-0 z-10">
+                <div class="flex items-center gap-2">
+                    <span class="text-xs text-slate-400">Trạng thái Server:</span>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Hoạt động tốt
+                    </span>
                 </div>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                    <div class="glass-panel p-6 rounded-2xl space-y-3 relative overflow-hidden group hover:border-slate-700 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Tổng Key</span>
-                            <div class="p-2 rounded-lg bg-slate-800 text-slate-300">
-                                <i data-lucide="key" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <div id="stat-total" class="text-3xl font-black text-white">0</div>
-                    </div>
-
-                    <div class="glass-panel p-6 rounded-2xl space-y-3 relative overflow-hidden group hover:border-emerald-500/30 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Đang Hoạt Động</span>
-                            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400">
-                                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <div id="stat-active" class="text-3xl font-black text-emerald-400">0</div>
-                    </div>
-
-                    <div class="glass-panel p-6 rounded-2xl space-y-3 relative overflow-hidden group hover:border-sky-500/30 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Chưa Sử Dụng</span>
-                            <div class="p-2 rounded-lg bg-sky-500/10 text-sky-400">
-                                <i data-lucide="clock" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <div id="stat-unused" class="text-3xl font-black text-sky-400">0</div>
-                    </div>
-
-                    <div class="glass-panel p-6 rounded-2xl space-y-3 relative overflow-hidden group hover:border-rose-500/30 transition">
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider">Banned</span>
-                            <div class="p-2 rounded-lg bg-rose-500/10 text-rose-400">
-                                <i data-lucide="ban" class="w-4 h-4"></i>
-                            </div>
-                        </div>
-                        <div id="stat-banned" class="text-3xl font-black text-rose-500">0</div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TAB 2: TẠO KEY MỚI -->
-            <section id="tab-create" class="hidden space-y-6 max-w-2xl">
-                <div>
-                    <h1 class="text-2xl font-extrabold text-white tracking-tight">Khởi Tạo Key Mới</h1>
-                    <p class="text-xs text-slate-400">Cấu hình tham số và tạo mã bản quyền mới</p>
-                </div>
-                
-                <div class="glass-panel p-8 rounded-3xl space-y-6">
-                    <div class="space-y-2">
-                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Loại Key</label>
-                        <select id="input-key-type" onchange="toggleKeyTypeInputs()" class="glass-input w-full rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none">
-                            <option value="single" class="bg-slate-900 text-white">🔑 Key Thường (Dành cho Vượt Link - 1 máy)</option>
-                            <option value="vip" class="bg-slate-900 text-white">⭐ Key VIP / Event (Phát Free - Sử dụng nhiều máy)</option>
-                        </select>
-                    </div>
-
-                    <div class="space-y-2">
-                        <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Mã Key (Code)</label>
-                        <input type="text" id="input-key-code" class="glass-input w-full rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none font-mono" placeholder="VD: KEY-VIP-PRO-100">
-                    </div>
-                    
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                        <div class="space-y-2">
-                            <label class="block text-xs font-bold text-slate-300 uppercase tracking-wider">Thời gian (Giờ)</label>
-                            <input type="number" id="input-key-hours" value="24" class="glass-input w-full rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none">
-                        </div>
-                        <div id="box-max-uses" class="hidden space-y-2">
-                            <label class="block text-xs font-bold text-amber-400 uppercase tracking-wider">Số máy tối đa</label>
-                            <input type="number" id="input-key-uses" value="20" class="glass-input border-amber-500/40 focus:border-amber-400 w-full rounded-xl px-4 py-3.5 text-sm text-white focus:outline-none">
-                        </div>
-                    </div>
-
-                    <button onclick="createNewKey()" class="w-full bg-gradient-to-r from-sky-400 to-blue-600 hover:from-sky-300 hover:to-blue-500 text-slate-950 font-bold py-3.5 rounded-xl text-sm transition shadow-lg shadow-sky-500/20 active:scale-[0.99]">
-                        + KHỞI TẠO KEY MỚI
+                <div class="flex items-center gap-3">
+                    <button onclick="loadAllData()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Làm Mới Dữ Liệu
                     </button>
                 </div>
-            </section>
+            </header>
 
-            <!-- TAB 3: DANH SÁCH KEY -->
-            <section id="tab-keys" class="hidden space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div class="p-6 md:p-8 space-y-6 max-w-7xl w-full mx-auto">
+
+                <!-- TAB 1: TỔNG QUAN -->
+                <section id="tab-overview" class="space-y-6">
                     <div>
-                        <h1 class="text-2xl font-extrabold text-white tracking-tight">Quản Lý Danh Sách Key</h1>
-                        <p class="text-xs text-slate-400">Danh sách toàn bộ key đã tạo trong hệ thống</p>
+                        <h1 class="text-2xl font-extrabold text-white">Bảng Thống Kê</h1>
+                        <p class="text-xs text-slate-400 mt-1">Tổng quan các chỉ số về Key và thiết bị trong hệ thống.</p>
                     </div>
                     
-                    <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <div class="relative w-full sm:w-64">
-                            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-500"></i>
-                            <input type="text" id="search-key" onkeyup="filterKeys()" placeholder="Tìm theo Key code..." class="glass-input w-full rounded-xl pl-9 pr-4 py-2.5 text-xs text-white focus:outline-none">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="glass-card p-5 rounded-2xl space-y-3 relative overflow-hidden group">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">TỔNG KEY</span>
+                                <div class="p-2 rounded-xl bg-blue-500/10 text-blue-400"><i data-lucide="key" class="w-5 h-5"></i></div>
+                            </div>
+                            <div id="stat-total" class="text-3xl font-extrabold text-white font-mono">0</div>
+                            <div class="text-[11px] text-slate-500">Tất cả key trên DB</div>
                         </div>
-                        <button onclick="loadAllData()" class="p-2.5 glass-panel hover:bg-slate-800 rounded-xl text-slate-300 hover:text-white transition shrink-0">
-                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+
+                        <div class="glass-card p-5 rounded-2xl space-y-3 relative overflow-hidden group">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">ĐANG HOẠT ĐỘNG</span>
+                                <div class="p-2 rounded-xl bg-emerald-500/10 text-emerald-400"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+                            </div>
+                            <div id="stat-active" class="text-3xl font-extrabold text-emerald-400 font-mono">0</div>
+                            <div class="text-[11px] text-slate-500">Key đã được kích hoạt</div>
+                        </div>
+
+                        <div class="glass-card p-5 rounded-2xl space-y-3 relative overflow-hidden group">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">CHƯA SỬ DỤNG</span>
+                                <div class="p-2 rounded-xl bg-cyan-500/10 text-cyan-400"><i data-lucide="clock" class="w-5 h-5"></i></div>
+                            </div>
+                            <div id="stat-unused" class="text-3xl font-extrabold text-cyan-400 font-mono">0</div>
+                            <div class="text-[11px] text-slate-500">Sẵn sàng để cấp phát</div>
+                        </div>
+
+                        <div class="glass-card p-5 rounded-2xl space-y-3 relative overflow-hidden group">
+                            <div class="flex justify-between items-start">
+                                <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">BANNED</span>
+                                <div class="p-2 rounded-xl bg-rose-500/10 text-rose-500"><i data-lucide="slash" class="w-5 h-5"></i></div>
+                            </div>
+                            <div id="stat-banned" class="text-3xl font-extrabold text-rose-500 font-mono">0</div>
+                            <div class="text-[11px] text-slate-500">Key bị khóa truy cập</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TAB 2: TẠO KEY MỚI -->
+                <section id="tab-create" class="hidden space-y-6 max-w-2xl">
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-white">Khởi Tạo Key Mới</h1>
+                        <p class="text-xs text-slate-400 mt-1">Tạo Key VIP hoặc Key đơn dùng cho hệ thống Vượt Link / Linkvertise.</p>
+                    </div>
+                    
+                    <div class="glass-panel p-6 rounded-2xl space-y-5 border border-slate-800">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-2">LOẠI KEY</label>
+                            <select id="input-key-type" onchange="toggleKeyTypeInputs()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition">
+                                <option value="single">🔑 Key Thường (Dành cho Vượt Link - 1 máy)</option>
+                                <option value="vip">⭐ Key VIP / Event (Phát Free - Sử dụng nhiều máy)</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-300 mb-2">MÃ KEY (CODE)</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="input-key-code" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm font-mono text-cyan-400 focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition placeholder:text-slate-600" placeholder="VD: KEY-VIP-PRO-100">
+                                <button onclick="generateRandomCode()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold rounded-xl transition border border-slate-700 shrink-0">Random</button>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-300 mb-2">THỜI GIAN SỬ DỤNG (GIỜ)</label>
+                                <input type="number" id="input-key-hours" value="24" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition">
+                            </div>
+                            <div id="box-max-uses" class="hidden">
+                                <label class="block text-xs font-bold text-amber-400 mb-2">SỐ MÁY TỐI ĐA (MAX USES)</label>
+                                <input type="number" id="input-key-uses" value="20" class="w-full bg-slate-950 border border-amber-500/30 rounded-xl px-4 py-3 text-sm text-amber-300 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition">
+                            </div>
+                        </div>
+
+                        <button onclick="createNewKey()" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold py-3.5 rounded-xl text-sm transition shadow-lg shadow-cyan-500/20 active:scale-[0.99] mt-2 flex items-center justify-center gap-2">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> KHỞI TẠO KEY
                         </button>
                     </div>
-                </div>
+                </section>
 
-                <div class="glass-panel rounded-3xl overflow-hidden shadow-xl border border-slate-800">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider font-bold border-b border-slate-800">
-                                <tr>
-                                    <th class="p-4">Mã Key</th>
-                                    <th class="p-4">Loại Key</th>
-                                    <th class="p-4">Trạng Thái</th>
-                                    <th class="p-4">Số Máy Đã Nhập</th>
-                                    <th class="p-4">Thời Hạn</th>
-                                    <th class="p-4">Thao Tác</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-keys-body" class="divide-y divide-slate-800/60 font-medium">
-                            </tbody>
-                        </table>
+                <!-- TAB 3: DANH SÁCH KEY -->
+                <section id="tab-keys" class="hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-2xl font-extrabold text-white">Quản Lý Key</h1>
+                            <p class="text-xs text-slate-400 mt-1">Danh sách tất cả các key đã tạo trong hệ thống.</p>
+                        </div>
+                        
+                        <div class="flex items-center gap-2">
+                            <div class="relative w-full sm:w-64">
+                                <i data-lucide="search" class="w-4 h-4 absolute left-3 top-3 text-slate-500"></i>
+                                <input type="text" id="search-key" onkeyup="filterKeys()" placeholder="Tìm kiếm Key code..." class="w-full bg-slate-950 border border-slate-800 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 transition">
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- TAB 4: QUẢN LÝ THIẾT BỊ HWID -->
-            <section id="tab-devices" class="hidden space-y-6">
-                <div>
-                    <h1 class="text-2xl font-extrabold text-white tracking-tight">Danh Sách Thiết Bị (HWID)</h1>
-                    <p class="text-xs text-slate-400">Các thiết bị máy trạm đang liên kết sử dụng key</p>
-                </div>
-                
-                <div class="glass-panel rounded-3xl overflow-hidden shadow-xl border border-slate-800">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-900/90 text-slate-400 uppercase tracking-wider font-bold border-b border-slate-800">
-                                <tr>
-                                    <th class="p-4">Mã Thiết Bị (HWID)</th>
-                                    <th class="p-4">Key Đang Dùng</th>
-                                    <th class="p-4">Hạn Sử Dụng</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-devices-body" class="divide-y divide-slate-800/60 font-medium">
-                            </tbody>
-                        </table>
+                    <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-900/90 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px] font-bold">
+                                    <tr>
+                                        <th class="p-4">Mã Key</th>
+                                        <th class="p-4">Loại Key</th>
+                                        <th class="p-4">Trạng Thái</th>
+                                        <th class="p-4">Số Máy Đã Dùng</th>
+                                        <th class="p-4">Thời Hạn</th>
+                                        <th class="p-4 text-right">Thao Tác</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-keys-body" class="divide-y divide-slate-800/60 font-medium">
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
+                <!-- TAB 4: QUẢN LÝ THIẾT BỊ HWID -->
+                <section id="tab-devices" class="hidden space-y-6">
+                    <div>
+                        <h1 class="text-2xl font-extrabold text-white">Danh Sách Thiết Bị (HWID)</h1>
+                        <p class="text-xs text-slate-400 mt-1">Quản lý danh sách Hardware ID đang kết nối và sử dụng Key.</p>
+                    </div>
+                    
+                    <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-900/90 text-slate-400 border-b border-slate-800 uppercase tracking-wider text-[10px] font-bold">
+                                    <tr>
+                                        <th class="p-4">Mã Thiết Bị (HWID)</th>
+                                        <th class="p-4">Key Đang Dùng</th>
+                                        <th class="p-4">Hạn Sử Dụng</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-devices-body" class="divide-y divide-slate-800/60 font-medium">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
         </main>
     </div>
 
     <!-- TOAST NOTIFICATION POPUP -->
-    <div id="toast" class="fixed bottom-6 right-6 glass-panel px-5 py-3.5 rounded-2xl text-xs font-bold text-white shadow-2xl border border-slate-700 transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center gap-2"></div>
+    <div id="toast" class="fixed bottom-5 right-5 glass-panel px-5 py-3.5 rounded-2xl text-xs font-bold text-white border border-slate-700/80 transform translate-y-20 opacity-0 transition-all duration-300 z-50 shadow-2xl flex items-center gap-2"></div>
 
     <script>
         let adminAuth = {};
@@ -334,11 +356,27 @@
             }
         }
 
+        function generateRandomCode() {
+            const prefix = document.getElementById('input-key-type').value === 'vip' ? 'VIP-' : 'KEY-';
+            const randomStr = Math.random().toString(36).substring(2, 10).toUpperCase();
+            document.getElementById('input-key-code').value = prefix + randomStr;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            showToast('Đã sao chép vào bộ nhớ tạm!');
+        }
+
         function showToast(msg, isError = false) {
             const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.className = `fixed bottom-6 right-6 glass-panel px-5 py-3.5 rounded-2xl text-xs font-bold transition-all duration-300 z-50 flex items-center gap-2 shadow-2xl ${isError ? 'border-rose-500/50 text-rose-400 bg-rose-950/30' : 'border-emerald-500/50 text-emerald-400 bg-emerald-950/30'}`;
+            const icon = isError ? '<i data-lucide="alert-circle" class="w-4 h-4 text-rose-400"></i>' : '<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>';
+            
+            toast.innerHTML = `${icon} <span>${msg}</span>`;
+            lucide.createIcons();
+            
+            toast.className = `fixed bottom-5 right-5 glass-panel px-5 py-3.5 rounded-2xl text-xs font-bold transition-all duration-300 z-50 shadow-2xl flex items-center gap-2.5 ${isError ? 'border-rose-500/30 text-rose-300' : 'border-emerald-500/30 text-emerald-300'}`;
             toast.classList.remove('translate-y-20', 'opacity-0');
+            
             setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 3000);
         }
 
@@ -346,26 +384,30 @@
             const u = document.getElementById('admin-user').value.trim();
             const p = document.getElementById('admin-pass').value.trim();
 
-            if (!u || !p) return showToast('Chưa nhập đủ thông tin!', true);
+            if (!u || !p) return showToast('Vui lòng điền đầy đủ thông tin!', true);
 
             adminAuth = { username: u, password: p };
 
-            const res = await fetch('/api/admin/list-keys', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(adminAuth)
-            });
+            try {
+                const res = await fetch('/api/admin/list-keys', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(adminAuth)
+                });
 
-            const data = await res.json();
-            if (!res.ok) return showToast(data.error || 'Sai tài khoản hoặc mật khẩu!', true);
+                const data = await res.json();
+                if (!res.ok) return showToast(data.error || 'Sai tài khoản hoặc mật khẩu!', true);
 
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('dashboard').classList.remove('hidden');
-            
-            cachedKeys = data.keys || [];
-            cachedSessions = data.sessions || [];
-            renderAllData();
-            showToast('Đăng nhập thành công!');
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard').classList.remove('hidden');
+                
+                cachedKeys = data.keys || [];
+                cachedSessions = data.sessions || [];
+                renderAllData();
+                showToast('Đăng nhập thành công!');
+            } catch (err) {
+                showToast('Không thể kết nối tới Server API!', true);
+            }
         }
 
         function switchTab(tabName) {
@@ -379,17 +421,21 @@
         }
 
         async function loadAllData() {
-            const res = await fetch('/api/admin/list-keys', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(adminAuth)
-            });
-            const data = await res.json();
-            if (res.ok) {
-                cachedKeys = data.keys || [];
-                cachedSessions = data.sessions || [];
-                renderAllData();
-                showToast('Đã làm mới dữ liệu!');
+            try {
+                const res = await fetch('/api/admin/list-keys', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(adminAuth)
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    cachedKeys = data.keys || [];
+                    cachedSessions = data.sessions || [];
+                    renderAllData();
+                    showToast('Đã cập nhật dữ liệu mới nhất!');
+                }
+            } catch (e) {
+                showToast('Lỗi cập nhật dữ liệu!', true);
             }
         }
 
@@ -404,57 +450,69 @@
             const devBody = document.getElementById('table-devices-body');
             devBody.innerHTML = '';
             if (cachedSessions.length === 0) {
-                devBody.innerHTML = '<tr><td colspan="3" class="p-5 text-center text-slate-500 font-medium">Chưa có thiết bị nào kết nối</td></tr>';
+                devBody.innerHTML = '<tr><td colspan="3" class="p-6 text-center text-slate-500">Chưa có thiết bị nào kết nối</td></tr>';
             } else {
                 cachedSessions.forEach(s => {
                     devBody.innerHTML += `
-                        <tr class="hover:bg-slate-800/40 transition">
-                            <td class="p-4 font-mono text-sky-400 font-semibold">${s.hwid}</td>
-                            <td class="p-4 font-bold text-white">${s.key_code}</td>
+                        <tr class="hover:bg-slate-800/30 transition">
+                            <td class="p-4 font-mono text-cyan-400">
+                                <div class="flex items-center gap-2">
+                                    <span>${s.hwid}</span>
+                                    <button onclick="copyToClipboard('${s.hwid}')" class="text-slate-500 hover:text-white"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                                </div>
+                            </td>
+                            <td class="p-4 font-bold text-white font-mono">${s.key_code}</td>
                             <td class="p-4 text-slate-400">${new Date(s.expires_at).toLocaleString('vi-VN')}</td>
                         </tr>
                     `;
                 });
             }
+            lucide.createIcons();
         }
 
         function renderKeysTable(keys) {
             const tbody = document.getElementById('table-keys-body');
             tbody.innerHTML = '';
             if (keys.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="p-5 text-center text-slate-500 font-medium">Không tìm thấy Key</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-slate-500">Không có Key nào được tìm thấy</td></tr>';
                 return;
             }
 
             keys.forEach(k => {
-                let badge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-sky-500/10 text-sky-400 border border-sky-500/20">CHƯA DÙNG</span>';
-                if (k.is_banned) badge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-rose-500/10 text-rose-400 border border-rose-500/20">BANNED</span>';
-                else if (k.status === 'active') badge = '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ĐÃ KÍCH HOẠT</span>';
+                let badge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">CHƯA DÙNG</span>';
+                if (k.is_banned) badge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">BANNED</span>';
+                else if (k.status === 'active') badge = '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">ĐÃ KÍCH HOẠT</span>';
 
                 const isVip = k.key_type === 'vip';
                 const typeBadge = isVip 
-                    ? '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-amber-500/10 text-amber-400 border border-amber-500/20">⭐ KEY VIP</span>' 
-                    : '<span class="px-2.5 py-1 rounded-full text-[10px] font-extrabold bg-slate-800 text-slate-300 border border-slate-700">🔑 THƯỜNG</span>';
+                    ? '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-extrabold bg-amber-500/10 text-amber-400 border border-amber-500/20">⭐ VIP</span>' 
+                    : '<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[10px] font-extrabold bg-slate-800 text-slate-400 border border-slate-700">🔑 THƯỜNG</span>';
 
                 const usedCount = k.used_count || 0;
                 const maxUses = k.max_uses || 1;
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-800/40 transition">
-                        <td class="p-4 font-bold text-white font-mono">${k.key_code}</td>
+                    <tr class="hover:bg-slate-800/30 transition">
+                        <td class="p-4 font-bold font-mono text-white">
+                            <div class="flex items-center gap-2">
+                                <span>${k.key_code}</span>
+                                <button onclick="copyToClipboard('${k.key_code}')" class="text-slate-500 hover:text-white"><i data-lucide="copy" class="w-3.5 h-3.5"></i></button>
+                            </div>
+                        </td>
                         <td class="p-4">${typeBadge}</td>
                         <td class="p-4">${badge}</td>
-                        <td class="p-4 font-mono font-bold ${usedCount >= maxUses ? 'text-rose-400' : 'text-sky-400'}">${usedCount}/${maxUses} máy</td>
+                        <td class="p-4 font-mono font-bold ${usedCount >= maxUses ? 'text-rose-400' : 'text-cyan-400'}">${usedCount}/${maxUses} máy</td>
                         <td class="p-4 text-slate-400">${k.duration_hours} giờ</td>
-                        <td class="p-4 space-x-2">
-                            <button onclick="toggleBanKey('${k.key_code}', ${!k.is_banned})" class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition ${k.is_banned ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/30'}">
+                        <td class="p-4 text-right space-x-1">
+                            <button onclick="toggleBanKey('${k.key_code}', ${!k.is_banned})" class="px-3 py-1.5 rounded-lg text-[11px] font-bold transition ${k.is_banned ? 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 hover:bg-amber-500/20 border border-amber-500/20'}">
                                 ${k.is_banned ? 'Unban' : 'Ban'}
                             </button>
-                            <button onclick="deleteKey('${k.key_code}')" class="px-3 py-1.5 rounded-lg text-[11px] font-bold bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/30 transition">Xóa</button>
+                            <button onclick="deleteKey('${k.key_code}')" class="px-3 py-1.5 rounded-lg text-[11px] font-bold bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 transition">Xóa</button>
                         </td>
                     </tr>
                 `;
             });
+            lucide.createIcons();
         }
 
         function filterKeys() {
@@ -469,7 +527,7 @@
             const hours = parseInt(document.getElementById('input-key-hours').value) || 24;
             const uses = parseInt(document.getElementById('input-key-uses').value) || 1;
 
-            if (!code) return showToast('Chưa nhập mã Key!', true);
+            if (!code) return showToast('Vui lòng nhập Mã Key!', true);
 
             const res = await fetch('/api/admin/add-key', {
                 method: 'POST',
@@ -485,11 +543,11 @@
 
             const data = await res.json();
             if (res.ok) {
-                showToast(data.message || 'Tạo Key mới thành công!');
+                showToast(data.message || 'Khởi tạo Key thành công!');
                 document.getElementById('input-key-code').value = '';
                 loadAllData();
             } else {
-                showToast(data.error || 'Lỗi tạo key!', true);
+                showToast(data.error || 'Lỗi khi tạo Key mới!', true);
             }
         }
 
@@ -499,18 +557,18 @@
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ ...adminAuth, key_code: keyCode, is_banned: isBanned })
             });
-            showToast(isBanned ? 'Đã BAN Key!' : 'Đã mở khóa Key!');
+            showToast(isBanned ? 'Đã BAN thành công!' : 'Đã bỏ mở khóa Key!');
             loadAllData();
         }
 
         async function deleteKey(keyCode) {
-            if (!confirm(`Xác nhận xóa vĩnh viễn Key ${keyCode}?`)) return;
+            if (!confirm(`Xác nhận xóa vĩnh viễn Key: ${keyCode}?`)) return;
             await fetch('/api/admin/delete-key', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({ ...adminAuth, key_code: keyCode })
             });
-            showToast('Đã xóa Key!');
+            showToast('Đã xóa Key khỏi hệ thống!');
             loadAllData();
         }
     </script>
